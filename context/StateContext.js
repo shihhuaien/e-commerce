@@ -219,7 +219,7 @@ export const StateContext = ({ children }) => {
     const toggleCartItemQuantities = (id, value) => {
         const updatedCartItems = cartItems.map((item) => {
             if (item._id === id) {
-                if (value === 'inc') {
+                if (value === 'inc' && item.quantity < item.inventory) {
                     setTotalPrice((prevTotalPrice) => prevTotalPrice + item.price);
                     setTotalQuantities((prevTotalQuantities) => prevTotalQuantities + 1);
                     return { ...item, quantity: item.quantity + 1 };
