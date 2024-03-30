@@ -8,7 +8,7 @@ const BuyInCartPage = ({ cartItems, qty, price, totalPrice, toggleBuyInCartPag, 
   display: flex;
   align-items: center; 
   justify-content: center; /* 使子元素靠右對齊 */
-  margin-bottom: 1rem;
+  margin-bottom: 0.3rem;
   gap: 0.5rem; 
 `;
 
@@ -20,7 +20,7 @@ const BuyInCartPage = ({ cartItems, qty, price, totalPrice, toggleBuyInCartPag, 
     const Input = styled.input`
   flex: 0 1 250px; /* 允許縮小到 min-content，但不超過 250px */
   max-width: 250px;
-  padding: .5rem;
+  padding: 0.3rem;
   border: 1px solid #ccc;
   border-radius: .25rem;
 `;
@@ -72,6 +72,7 @@ const BuyInCartPage = ({ cartItems, qty, price, totalPrice, toggleBuyInCartPag, 
                             address: document.getElementById('address').value,
                             phone: document.getElementById('phone').value,
                             comment: document.getElementById('comment').value,
+                            email: document.getElementById('email').value,
                             price: price * qty,
                             qty: qty,
                         };
@@ -85,6 +86,10 @@ const BuyInCartPage = ({ cartItems, qty, price, totalPrice, toggleBuyInCartPag, 
                         <FormGroup>
                             <Label htmlFor="address">寄件地址</Label>
                             <Input type="text" id="address" name="address" required />
+                        </FormGroup>
+                        <FormGroup>
+                            <Label htmlFor="email">電子信箱</Label>
+                            <Input type="text" id="email" name="email" required />
                         </FormGroup>
                         <FormGroup>
                             <Label htmlFor="phone">聯絡電話</Label>

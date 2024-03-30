@@ -31,7 +31,7 @@ export const StateContext = ({ children }) => {
         setIsLoading(true);
         console.log(isLoading);
         try {
-            const inventoryUpdates = cartItems.map(async (product) => { // 注意这里直接返回 async 函数的调用
+            const inventoryUpdates = cartItems.map(async (product) => { // 注意這邊直接返回 async 函數的調用
                 console.log(`Product ID: ${product._id}, Quantity to decrement: ${product.quantity}`);
                 const response = await client
                     .patch(product._id)
@@ -60,6 +60,7 @@ export const StateContext = ({ children }) => {
             qty: productQtys,
             dayTime: currentTime,
             productName: productNames,
+            email: formData.email,
         })
         console.log('建立訂單成功', formData.recipient, productNames, productQtys);
 
@@ -98,7 +99,13 @@ export const StateContext = ({ children }) => {
             draggable: true,
             progress: undefined,
         });
-
+        try {
+            await sendOrderConfirmationEmail(formData);
+            toast.success('訂單確認郵件已發送！');
+        } catch (error) {
+            console.error('發送訂單確認郵件時發生錯誤:', error);
+            toast.error('訂單確認郵件發送失敗。');
+        }
         //導回首頁
         router.replace('/');
         setIfBuyInCartPage(current => !current);
@@ -129,6 +136,8 @@ export const StateContext = ({ children }) => {
                 qty: formData.qty,
                 dayTime: currentTime,
                 productName: formData.productName,
+                email: formData.email,
+
             })
             console.log('建立訂單成功', formData.recipient);
             setQty(1);
@@ -163,6 +172,14 @@ export const StateContext = ({ children }) => {
                 draggable: true,
                 progress: undefined,
             });
+            //寄送email給客戶
+            try {
+                await sendOrderConfirmationEmail(formData);
+                toast.success('訂單確認郵件已發送！');
+            } catch (error) {
+                console.error('發送訂單確認郵件時發生錯誤:', error);
+                toast.error('訂單確認郵件發送失敗。');
+            }
 
             router.replace('/');
             setBuyNowPage(current => !current);
@@ -171,6 +188,46 @@ export const StateContext = ({ children }) => {
         } finally {
             setIsLoading(false); // 無論成功或失敗，結束加載時設置為 false
         }
+    }
+
+    const sendOrderConfirmationEmail = async (formData) => {
+        const productNameAndQty = cartItems.map(item => `${item.name}(${item.quantity})`).join(', ');
+        const orderInfoLines = [
+            '感謝光臨跳蚤市場~以下是訂單資訊',
+            `收件人: ${formData.recipient}`,
+            `品項/數量: ${productNameAndQty}`,
+            `地址: ${formData.address}`,
+            `聯絡電話: ${formData.phone}`,
+            `訂單金額: ${totalPrice}`,
+            `備註: ${formData.comment}`,
+            `下單（匯款）時間: ${new Date().toISOString()}`,
+            '',
+            '我們會在幾天內寄送物品到你的家，敬請期待：）',
+            '',
+            `匯款資訊：`,
+            '代碼：808 玉山銀行',
+            '帳號：0026979097631',
+        ];
+
+        const emailData = {
+            recipientEmail: formData.email, // 收件人的電子郵件地址
+            orderInfo: orderInfoLines.join('\n'), // 將訂單信息數組轉換為一個字符串
+        };
+
+        const response = await fetch('/api/sendEmail', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(emailData),
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        return data;
     }
 
     const downloadOrderInfoAsPdf = (formData, orderInfoLines) => {

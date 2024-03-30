@@ -8,7 +8,7 @@ const BuyNowPage = ({ product, qty, price, toggleStartBuyingPage, updateInventor
   display: flex;
   align-items: center; 
   justify-content: center; /* 使子元素靠右對齊 */
-  margin-bottom: 1rem;
+  margin-bottom: 0.3rem;
   gap: 0.5rem; 
 `;
 
@@ -20,7 +20,7 @@ const BuyNowPage = ({ product, qty, price, toggleStartBuyingPage, updateInventor
     const Input = styled.input`
   flex: 0 1 250px; /* 允許縮小到 min-content，但不擴展超過 300px */
   max-width: 250px; /* 最大寬度為 200px，但可以在小容器中收縮 */
-  padding: .5rem;
+  padding: 0.3rem;
   border: 1px solid #ccc;
   border-radius: .25rem;
 `;
@@ -68,6 +68,7 @@ const BuyNowPage = ({ product, qty, price, toggleStartBuyingPage, updateInventor
                             address: document.getElementById('address').value,
                             phone: document.getElementById('phone').value,
                             comment: document.getElementById('comment').value,
+                            email: document.getElementById('email').value,
                             price: price * qty,
                             qty: qty,
                             productName: product.name,
@@ -82,6 +83,10 @@ const BuyNowPage = ({ product, qty, price, toggleStartBuyingPage, updateInventor
                         <FormGroup>
                             <Label htmlFor="address">寄件地址</Label>
                             <Input type="text" id="address" name="address" required />
+                        </FormGroup>
+                        <FormGroup>
+                            <Label htmlFor="email">電子信箱</Label>
+                            <Input type="text" id="email" name="email" required />
                         </FormGroup>
                         <FormGroup>
                             <Label htmlFor="phone">聯絡電話</Label>
